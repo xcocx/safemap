@@ -43,6 +43,9 @@ type Interface interface {
 	GetStringMap(key string) (value map[string]any)
 	GetStringMapString(key string) (value map[string]string)
 	GetStringMapStringSlice(key string) (value map[string][]string)
+
+	Delete(key string)
+	All() (value map[any]any)
 }
 
 func New() Interface {
@@ -256,5 +259,18 @@ func (s *safeMap) GetStringMapStringSlice(key string) (value map[string][]string
 	if val, ok := s.Load(key); ok && val != nil {
 		value, _ = val.(map[string][]string)
 	}
+	return
+}
+
+func (s *safeMap) Delete(key string) {
+	s.Map.Delete(key)
+}
+
+func (s *safeMap) All() (value map[any]any) {
+	value = make(map[any]any)
+	s.Range(func(k, v any) bool {
+		value[k] = v
+		return true
+	})
 	return
 }
